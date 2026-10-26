@@ -8,10 +8,15 @@ public class Perro extends Animal {
 
     @Override
     public int calcularMinutosCuidado() {
-        int minutos = 30;
-        if (getEdad() < 12) {
-            minutos += 10;
+        int base = 30;
+        if (edad < 12) {
+            base += 10;
         }
-        return minutos;
+        return base;
+    }
+
+    @Override
+    public String getEspecie() {
+        return "Perro";
     }
 }

@@ -1,27 +1,25 @@
 package reto2;
 
-import java.util.Locale;
-
 public abstract class Animal implements Reporte {
-    private String id;
-    private String nombre;
-    private int edad;
-    private boolean disponible;
+    protected String id;
+    protected String nombre;
+    protected int edad;
+    protected boolean disponible;
 
     public Animal(String id, String nombre, int edad) {
         if (id == null || id.strip().isEmpty()) {
-            throw new IllegalArgumentException("El ID no puede ser nulo o en blanco.");
-        }
-        if (nombre == null || nombre.strip().isEmpty()) {
-            throw new IllegalArgumentException("El nombre no puede ser nulo o en blanco.");
-        }
-        if (edad < 0 || edad > 240) {
-            throw new IllegalArgumentException("La edad debe estar entre 0 y 240 meses.");
+            this.id = "INVALIDO";
+        } else {
+            this.id = id.strip().toUpperCase();
         }
 
-        this.id = id.strip().toUpperCase(Locale.ROOT);
-        this.nombre = nombre.strip();
-        this.edad = edad;
+        if (edad < 0 || edad > 240) {
+            this.edad = 0;
+        } else {
+            this.edad = edad;
+        }
+
+        this.nombre = (nombre != null) ? nombre.strip() : "";
         this.disponible = true;
     }
 
@@ -46,14 +44,12 @@ public abstract class Animal implements Reporte {
     }
 
     public abstract int calcularMinutosCuidado();
+    public abstract String getEspecie();
 
     @Override
     public String generarFicha() {
-        return "ID: " + id +
-                ", Nombre: " + nombre +
-                ", Especie: " + this.getClass().getSimpleName() +
-                ", Edad: " + edad + " meses" +
-                ", Disponible: " + (disponible ? "Sí" : "No") +
-                ", Minutos de cuidado: " + (disponible ? calcularMinutosCuidado() : 0);
+        return "ID: " + id + " | Nombre: " + nombre + " | Especie: " + getEspecie() +
+                " | Edad: " + edad + " meses | Disponible: " + (disponible ? "Sí" : "No") +
+                " | Minutos Cuidado: " + calcularMinutosCuidado();
     }
 }

@@ -17,7 +17,9 @@ public class Evidencia<T> {
         return contenido;
     }
 
-    public void mostrar() {
-        System.out.println(descripcion + ": " + contenido);
+    public void mostrarEvidencia() {
+        System.out.println("--- EVIDENCIA ---");
+        System.out.println("Descripción: " + descripcion);
+        System.out.println("Contenido: " + contenido);
     }
 }

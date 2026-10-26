@@ -1,137 +1,86 @@
 package reto2;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 public class CentroDeAdopcion {
     private List<Animal> animales;
-    private int[] visitantes;
 
     public CentroDeAdopcion() {
         this.animales = new ArrayList<>();
-        this.visitantes = new int[5];
     }
 
-
     public boolean registrarAnimal(Animal animal) {
-        if (animal == null) return false;
-
-        for (Animal a : animales) {
-            if (a.getId().equals(animal.getId())) {
-                return false;
-            }
+        if (animal == null || animal.getId().equals("INVALIDO")) {
+            return false; // Rechaza datos inválidos
         }
-
+        // Validar si el ID ya existe normalizado
+        if (buscarPorId(animal.getId()) != null) {
+            return false; // ID duplicado rechazado
+        }
         animales.add(animal);
         return true;
     }
 
-    public Animal buscarPorId(String idBuscado) {
-        if (idBuscado == null) return null;
-        String idNorm = idBuscado.strip().toUpperCase(Locale.ROOT);
-
-        for (Animal a : animales) {
-            if (a.getId().equals(idNorm)) {
+    public Animal buscarPorId(String id) {
+        if (id == null || id.strip().isEmpty()) {
+            return null;
+        }
+        String idBuscado = id.strip().toUpperCase();
+        for (int i = 0; i < animales.size(); i++) {
+            Animal a = animales.get(i);
+            if (a.getId().equals(idBuscado)) {
                 return a;
             }
         }
         return null;
     }
 
-    public boolean adoptarAnimal(String idBuscado) {
-        Animal animal = buscarPorId(idBuscado);
+    public boolean adoptarAnimal(String id) {
+        Animal animal = buscarPorId(id);
         if (animal == null) {
             System.out.println("No encontrado");
             return false;
         }
-
         if (!animal.isDisponible()) {
-            return false;
+            return false; // Ya adoptado, se rechaza sin cambiar estado
         }
-
         animal.setDisponible(false);
         return true;
     }
 
-    public List<Animal> getAnimales() {
-        return Collections.unmodifiableList(animales);
+    public List<Animal> getListaAnimales() {
+        return new ArrayList<>(animales); // Encapsulamiento defensivo
     }
 
-
-    public boolean registrarVisitantesDia(int diaIndex, int cantidad) {
-        if (diaIndex < 0 || diaIndex >= 5) {
-            return false;
-        }
-        if (cantidad < 0 || cantidad > 100) {
-            return false;
-        }
-        visitantes[diaIndex] = cantidad;
-        return true;
-    }
-
-    public int getVisitantesDia(int diaIndex) {
-        if (diaIndex < 0 || diaIndex >= 5) return -1;
-        return visitantes[diaIndex];
-    }
-
-    public int calcularTotalVisitantes() {
-        int total = 0;
-        for (int v : visitantes) {
-            total += v;
-        }
-        return total;
-    }
-
-    public double calcularPromedioVisitantes() {
-        return calcularTotalVisitantes() / 5.0;
-    }
-
-    public int calcularMaximoVisitantes() {
-        if (visitantes.length == 0) return 0;
-        int max = visitantes[0];
-        for (int v : visitantes) {
-            if (v > max) {
-                max = v;
-            }
-        }
-        return max;
-    }
-
-    public int calcularPrimerDiaMaximoVisitantes() {
-        int max = calcularMaximoVisitantes();
-        for (int i = 0; i < visitantes.length; i++) {
-            if (visitantes[i] == max) {
-                return i + 1;
-            }
-        }
-        return -1;
-    }
-
-    public int contarRegistrados() {
+    public int getTotalRegistrados() {
         return animales.size();
     }
 
-    public int contarDisponibles() {
+    public int getTotalDisponibles() {
         int count = 0;
-        for (Animal a : animales) {
-            if (a.isDisponible()) count++;
+        for (int i = 0; i < animales.size(); i++) {
+            if (animales.get(i).isDisponible()) {
+                count++;
+            }
         }
         return count;
     }
 
-    public int contarAdoptados() {
+    public int getTotalAdoptados() {
         int count = 0;
-        for (Animal a : animales) {
-            if (!a.isDisponible()) count++;
+        for (int i = 0; i < animales.size(); i++) {
+            if (!animales.get(i).isDisponible()) {
+                count++;
+            }
         }
         return count;
     }
 
-    public int calcularMinutosCuidadoDisponibles() {
+    public int getMinutosCuidadoDisponibles() {
         int totalMinutos = 0;
-        for (Animal a : animales) {
+        for (int i = 0; i < animales.size(); i++) {
+            Animal a = animales.get(i);
             if (a.isDisponible()) {
                 totalMinutos += a.calcularMinutosCuidado();
             }
